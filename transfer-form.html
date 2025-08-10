@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>คำร้องขอโอนย้ายสาขาวิชา</title>
+<style>
+
+  :root{
+    --blue-1: #e6f5ff; --blue-2: #cfeeff; --blue-3: #87cdfa; --blue-4: #3bb0ff; --blue-5: #007acc;
+    --cute: #6ec1ff; --success: #1aa34a; --error: #e02828; --card: #ffffff; --muted: #6b7280; --radius: 12px;
+  }
+  *{box-sizing:border-box;font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif}
+  body{margin:0;background: linear-gradient(180deg, #f5fbff 0%, #eef9ff 100%); padding:28px; color:#0f172a;}
+  .container{max-width:980px;margin:0 auto;display:grid;gap:18px;}
+  header{display:flex;gap:12px;align-items:center;background:linear-gradient(90deg,var(--blue-3),var(--blue-4));color:white;padding:18px;border-radius:12px;box-shadow: 0 6px 20px rgba(59,176,255,0.15);}
+  header h1{ margin:0; font-size:20px;}
+  .card{background: var(--card);border-radius: var(--radius);padding:18px;box-shadow: 0 6px 20px rgba(16,24,40,0.06);border:1px solid rgba(15,23,42,0.04);}
+  .form-title{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .badge{background:linear-gradient(90deg,var(--cute),var(--blue-5));color:white;padding:6px 10px;border-radius:10px;font-weight:600;font-size:13px;}
+  form .row{display:grid;grid-template-columns: 1fr 1fr;gap:12px;}
+  label.field{display:block;margin-bottom:10px;font-size:13px;color:var(--muted);}
+  input[type="text"], input[type="number"], textarea, select{width:100%;padding:10px 12px;border-radius:10px;border:2px solid rgba(15,23,42,0.06);outline:none;background: linear-gradient(180deg, #fff, #fbfdff);transition: all .16s ease;font-size:14px;color:#06243a;}
+  textarea{ min-height:90px; resize:vertical; }
+  input:focus, textarea:focus, select:focus{ transform: translateY(-1px); border-color: var(--blue-4); box-shadow: 0 6px 18px rgba(59,176,255,0.12);}
+  .field-wrapper{ margin-bottom:8px; position:relative; }
+  .msg{ font-size:13px; margin-top:6px; min-height:18px; }
+  .msg.success{ color:var(--success); }
+  .msg.error{ color:var(--error); }
+  .input-invalid{ border-color: rgba(224,40,40,0.9) !important; box-shadow: 0 4px 12px rgba(224,40,40,0.08) !important; }
+  .input-valid{ border-color: rgba(26,163,74,0.9) !important; box-shadow: 0 4px 12px rgba(26,163,74,0.06) !important; }
+  .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:8px; }
+  button.primary{ background: linear-gradient(90deg,var(--blue-4),var(--blue-5)); color:white; border:none; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; box-shadow: 0 8px 28px rgba(59,176,255,0.18); }
+  button.ghost{ background:transparent; border:1px solid rgba(15,23,42,0.06); padding:10px 12px; border-radius:10px; cursor:pointer; }
+  .small-help{ font-size:13px; color:var(--muted); margin-top:6px; }
+  @media (max-width:720px){ .row{ grid-template-columns: 1fr; } .actions{ justify-content:stretch; flex-direction:column; } button.primary{ width:100% } }
+
+  /* Modal */
+  .modal-backdrop{ position:fixed; inset:0; background: rgba(6, 10, 20, 0.45); display:flex; align-items:center; justify-content:center; z-index:60; opacity:0; pointer-events:none; transition:opacity .18s ease; }
+  .modal{ background: linear-gradient(180deg,#fff,#f8feff); width: min(520px, 92%); border-radius:14px; padding:20px; box-shadow:0 20px 60px rgba(2,6,23,0.4); transform: translateY(12px) scale(.98); transition: transform .18s ease; }
+  .modal-backdrop.show{ opacity:1; pointer-events:auto; }
+  .modal-backdrop.show .modal{ transform: translateY(0) scale(1); }
+  .modal h3{ margin:0 0 8px 0 }
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="width:44px;height:44px;border-radius:8px;background:linear-gradient(180deg,#fff,#f0fbff);display:flex;align-items:center;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s-8-5.6-8-10.2S7 4 12 8.2 20 7 20 10.8 12 21 12 21z" fill="#7fd1ff"/></svg>
+      </div>
+      <div>
+        <h1>คำร้องขอโอนย้ายสาขาวิชา</h1>
+        <p style="margin:0;color:var(--muted)">สร้างตามแบบฟอร์ม PDF — มีการตรวจสอบความถูกต้องก่อนส่ง</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="form-title">
+        <div class="badge">คำร้องขอโอนย้ายสาขาวิชา</div>
+        <div style="margin-left:auto;font-size:13px;color:var(--muted)"><a href="index.html" style="text-decoration:none;color:inherit">กลับเมนู</a></div>
+      </div>
+
+      <form id="transferForm" novalidate>
+        <div class="row">
+          <div>
+            <div class="field-wrapper">
+              <label class="field">วันที่ (วันที่/เดือน/พ.ศ.)</label>
+<input id="date" type="date">
+              <div id="dateMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">ชื่อ-นามสกุล</label>
+              <input id="tf_name" type="text" placeholder="ป้อนชื่อ-นามสกุล">
+              <div id="tf_nameMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">รหัสนักศึกษา</label>
+              <input id="tf_studentId" type="text" placeholder="เช่น 64012345">
+              <div id="tf_studentIdMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">เบอร์มือถือ</label>
+              <input id="tf_phone" type="text" inputmode="numeric" placeholder="0891234567">
+              <div id="tf_phoneMsg" class="msg" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="field-wrapper">
+              <label class="field">หลักสูตร</label>
+              <select id="tf_program">
+                <option value="">-- เลือกหลักสูตร --</option>
+                <option value="4 ปียก">4 ปี</option>
+                <option value="4 ปียกเทียบ">4 ปี (เทียบเข้าเรียน 2 ปี)</option>
+              </select>
+              <div id="tf_programMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">สาขาวิชาเดิม / คณะเดิม</label>
+              <input id="tf_oldMajor" type="text" placeholder="สาขา/คณะเดิม">
+              <div id="tf_oldMajorMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">สาขาวิชาที่ต้องการโอนเข้า / คณะใหม่</label>
+              <input id="tf_newMajor" type="text" placeholder="สาขาที่ต้องการโอนเข้า">
+              <div id="tf_newMajorMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">เหตุผลที่ขอโอนย้าย (อธิบาย)</label>
+              <textarea id="tf_reason" placeholder="อธิบายเหตุผลโดยย่อ"></textarea>
+              <div id="tf_reasonMsg" class="msg" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:8px">
+          <label style="font-size:14px;color:var(--muted)"><input id="tf_confirm" type="checkbox"> ข้าพเจ้าขอยืนยันว่ามีคุณสมบัติตามข้อกำหนด (เช่น หน่วยกิตสะสม / GPA / ระยะเวลาเรียน ตามที่กฎกำหนด)</label>
+          <div id="tf_confirmMsg" class="msg" aria-live="polite"></div>
+        </div>
+
+        <div class="small-help">หมายเหตุ: ตรวจสอบเอกสารแนบและคุณสมบัติตามข้อกำหนดก่อนส่ง</div>
+
+        <div class="actions">
+  <button type="button" class="ghost" onclick="resetTransfer()">รีเซ็ต</button>
+  <button type="button" class="primary" onclick="submitTransfer()">ส่งคำร้อง</button>
+</div>
+</form>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">สำเร็จ 🎉</h3>
+      <p id="modalBody">การส่งสำเร็จ</p>
+      <div style="text-align:right">
+        <button class="ok" onclick="closeModal()" style="background:linear-gradient(90deg,var(--blue-4),var(--blue-5));color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer">ตกลง</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  /* --- Helpers --- */
+  function setMsg(elId, text, type){
+    const el = document.getElementById(elId);
+    el.textContent = text;
+    el.className = 'msg ' + (type === 'success' ? 'success' : (text ? 'error' : ''));
+  }
+  function markInput(inputEl, valid){
+    if(!inputEl) return;
+    inputEl.classList.remove('input-valid','input-invalid');
+    if(valid === true) inputEl.classList.add('input-valid');
+    else if(valid === false) inputEl.classList.add('input-invalid');
+  }
+
+  /* --- transfer form elements --- */
+  const tf_name = document.getElementById('tf_name');
+  const tf_studentId = document.getElementById('tf_studentId');
+  const tf_phone = document.getElementById('tf_phone');
+  const tf_program = document.getElementById('tf_program');
+  const tf_oldMajor = document.getElementById('tf_oldMajor');
+  const tf_newMajor = document.getElementById('tf_newMajor');
+  const tf_reason = document.getElementById('tf_reason');
+  const tf_confirm = document.getElementById('tf_confirm');
+  const dateEl = document.getElementById('date');
+
+// Convert date picker value to Thai format (dd/mm/yyyy in B.E.)
+dateEl.addEventListener('change', () => {
+  if(dateEl.value){
+    const [year, month, day] = dateEl.value.split('-').map(Number);
+    const thaiYear = year + 543;
+    const formatted = String(day).padStart(2,'0') + '/' + String(month).padStart(2,'0') + '/' + thaiYear;
+    dateEl.setAttribute('data-formatted', formatted);
+  } else {
+    dateEl.removeAttribute('data-formatted');
+  }
+});
+
+
+  const touched = {};
+
+  // add listeners
+  [tf_name, tf_studentId, tf_phone, tf_program, tf_oldMajor, tf_newMajor, tf_reason, dateEl].forEach(el=>{
+    el.addEventListener('input', ()=>{ touched[el.id]=true; validateTfField(el.id); });
+    el.addEventListener('change', ()=>{ touched[el.id]=true; validateTfField(el.id); });
+  });
+  tf_confirm.addEventListener('change', ()=>{ touched.tf_confirm = true; validateTfField('tf_confirm'); });
+
+  function validateTfField(id){
+    if(id==='date'){
+      const v = (dateEl.getAttribute('data-formatted') || '').trim();
+      if(!touched.date && v===''){ setMsg('dateMsg','',null); return false; }
+      // basic dd/mm/yyyy or d/m/yyyy pattern (not strict)
+      if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v)){ setMsg('dateMsg','', 'success'); return true; }
+      setMsg('dateMsg','รูปแบบวันที่ไม่ถูกต้อง (ตัวอย่าง: 10/08/2568)','error'); return false;
+    }
+    if(id==='tf_name'){
+      const v = tf_name.value.trim();
+      if(!touched.tf_name && v===''){ setMsg('tf_nameMsg','',null); markInput(tf_name,null); return false; }
+      if(v.length>=2){ setMsg('tf_nameMsg','✓ ชื่อถูกต้อง','success'); markInput(tf_name,true); return true; }
+      setMsg('tf_nameMsg','ชื่อ-นามสกุลต้องมีอย่างน้อย 2 ตัว','error'); markInput(tf_name,false); return false;
+    }
+    if(id==='tf_studentId'){
+      const v = tf_studentId.value.trim();
+      if(!touched.tf_studentId && v===''){ setMsg('tf_studentIdMsg','',null); markInput(tf_studentId,null); return false; }
+      if(/^[0-9]{6,12}$/.test(v)){ setMsg('tf_studentIdMsg','✓ รหัสนักศึกษาถูกต้อง','success'); markInput(tf_studentId,true); return true; }
+      setMsg('tf_studentIdMsg','รหัสนักศึกษาต้องเป็นตัวเลขอย่างน้อย 6-12 หลัก','error'); markInput(tf_studentId,false); return false;
+    }
+    if(id==='tf_phone'){
+      const v = tf_phone.value.trim();
+      if(!touched.tf_phone && v===''){ setMsg('tf_phoneMsg','',null); markInput(tf_phone,null); return false; }
+      if(/^[0-9]{10}$/.test(v)){ setMsg('tf_phoneMsg','✓ เบอร์ถูกต้อง','success'); markInput(tf_phone,true); return true; }
+      setMsg('tf_phoneMsg','เบอร์โทรต้องมี 10 หลัก','error'); markInput(tf_phone,false); return false;
+    }
+    if(id==='tf_program'){
+      const v = tf_program.value;
+      if(!touched.tf_program && v===''){ setMsg('tf_programMsg','',null); markInput(tf_program,null); return false; }
+      if(v){ setMsg('tf_programMsg','✓ เลือกแล้ว','success'); markInput(tf_program,true); return true; }
+      setMsg('tf_programMsg','กรุณาเลือกหลักสูตร','error'); markInput(tf_program,false); return false;
+    }
+    if(id==='tf_oldMajor'){
+      const v = tf_oldMajor.value.trim();
+      if(!touched.tf_oldMajor && v===''){ setMsg('tf_oldMajorMsg','',null); markInput(tf_oldMajor,null); return false; }
+      if(v.length>0){ setMsg('tf_oldMajorMsg','✓ ข้อมูลครบ','success'); markInput(tf_oldMajor,true); return true; }
+      setMsg('tf_oldMajorMsg','กรุณากรอกสาขาเดิม','error'); markInput(tf_oldMajor,false); return false;
+    }
+    if(id==='tf_newMajor'){
+      const v = tf_newMajor.value.trim();
+      if(!touched.tf_newMajor && v===''){ setMsg('tf_newMajorMsg','',null); markInput(tf_newMajor,null); return false; }
+      if(v.length>0){ setMsg('tf_newMajorMsg','✓ ข้อมูลครบ','success'); markInput(tf_newMajor,true); return true; }
+      setMsg('tf_newMajorMsg','กรุณากรอกสาขาที่ต้องการโอนเข้า','error'); markInput(tf_newMajor,false); return false;
+    }
+    if(id==='tf_reason'){
+      const v = tf_reason.value.trim();
+      if(!touched.tf_reason && v===''){ setMsg('tf_reasonMsg','',null); markInput(tf_reason,null); return false; }
+      if(v.length>=10){ setMsg('tf_reasonMsg','✓ เหตุผลดูครบถ้วน','success'); markInput(tf_reason,true); return true; }
+      setMsg('tf_reasonMsg','กรุณาใส่เหตุผลอย่างน้อย 10 ตัวอักษร','error'); markInput(tf_reason,false); return false;
+    }
+    if(id==='tf_confirm'){
+      if(!touched.tf_confirm){ setMsg('tf_confirmMsg','',null); return false; }
+      if(tf_confirm.checked){ setMsg('tf_confirmMsg','✓ ยืนยันแล้ว','success'); return true; }
+      setMsg('tf_confirmMsg','ต้องติ๊กยืนยันว่ามีคุณสมบัติตามข้อกำหนด','error'); return false;
+    }
+    return false;
+  }
+
+  function validateAllTransfer(){
+    ['date','tf_name','tf_studentId','tf_phone','tf_program','tf_oldMajor','tf_newMajor','tf_reason','tf_confirm'].forEach(k=>touched[k]=true);
+    const results = [
+      validateTfField('date'),
+      validateTfField('tf_name'),
+      validateTfField('tf_studentId'),
+      validateTfField('tf_phone'),
+      validateTfField('tf_program'),
+      validateTfField('tf_oldMajor'),
+      validateTfField('tf_newMajor'),
+      validateTfField('tf_reason'),
+      validateTfField('tf_confirm')
+    ];
+    return results.every(r=>r===true);
+  }
+
+  function resetTransfer(){
+    document.getElementById('transferForm').reset();
+    ['dateMsg','tf_nameMsg','tf_studentIdMsg','tf_phoneMsg','tf_programMsg','tf_oldMajorMsg','tf_newMajorMsg','tf_reasonMsg','tf_confirmMsg'].forEach(id=>setMsg(id,'',''));
+    [tf_name,tf_studentId,tf_phone,tf_program,tf_oldMajor,tf_newMajor,tf_reason,dateEl].forEach(el=>markInput(el,null));
+    ['date','tf_name','tf_studentId','tf_phone','tf_program','tf_oldMajor','tf_newMajor','tf_reason','tf_confirm'].forEach(k=>touched[k]=false);
+  }
+
+  function submitTransfer(){
+    if(!validateAllTransfer()){
+      alert('กรุณากรอกข้อมูลให้ถูกต้องก่อนส่งคำร้อง');
+      return;
+    }
+    // show summary modal
+    const summary = `ชื่อ: ${tf_name.value}\nรหัส: ${tf_studentId.value}\nคณะใหม่/สาขา: ${tf_newMajor.value}\nเหตุผล: ${tf_reason.value.substring(0,120)}${tf_reason.value.length>120?'...':''}`;
+    showModal('ส่งคำร้องสำเร็จ', summary);
+  }
+
+  /* --- Modal control --- */
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalBody = document.getElementById('modalBody');
+  const modalTitle = document.getElementById('modalTitle');
+
+  function showModal(title, body){
+    modalTitle.textContent = title;
+    modalBody.textContent = body;
+    modalBackdrop.classList.add('show');
+    modalBackdrop.setAttribute('aria-hidden','false');
+  }
+  function closeModal(){ modalBackdrop.classList.remove('show'); modalBackdrop.setAttribute('aria-hidden','true'); }
+  modalBackdrop.addEventListener('click', (e)=>{ if(e.target === modalBackdrop) closeModal(); });
+
+  // prevent real submit
+  document.querySelectorAll('form').forEach(f=>{ f.addEventListener('submit', ev => ev.preventDefault()); });
+
+  // init
+  resetTransfer();
+</script>
+</body>
+</html>

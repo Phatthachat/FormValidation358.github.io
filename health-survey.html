@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>แบบสอบถามสุขภาพ</title>
+<style>
+
+  :root{
+    --blue-1: #e6f5ff; --blue-2: #cfeeff; --blue-3: #87cdfa; --blue-4: #3bb0ff; --blue-5: #007acc;
+    --cute: #6ec1ff; --success: #1aa34a; --error: #e02828; --card: #ffffff; --muted: #6b7280; --radius: 12px;
+  }
+  *{box-sizing:border-box;font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif}
+  body{margin:0;background: linear-gradient(180deg, #f5fbff 0%, #eef9ff 100%); padding:28px; color:#0f172a;}
+  .container{max-width:980px;margin:0 auto;display:grid;gap:18px;}
+  header{display:flex;gap:12px;align-items:center;background:linear-gradient(90deg,var(--blue-3),var(--blue-4));color:white;padding:18px;border-radius:12px;box-shadow: 0 6px 20px rgba(59,176,255,0.15);}
+  header h1{ margin:0; font-size:20px;}
+  .card{background: var(--card);border-radius: var(--radius);padding:18px;box-shadow: 0 6px 20px rgba(16,24,40,0.06);border:1px solid rgba(15,23,42,0.04);}
+  .form-title{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .badge{background:linear-gradient(90deg,var(--cute),var(--blue-5));color:white;padding:6px 10px;border-radius:10px;font-weight:600;font-size:13px;}
+  form .row{display:grid;grid-template-columns: 1fr 1fr;gap:12px;}
+  label.field{display:block;margin-bottom:10px;font-size:13px;color:var(--muted);}
+  input[type="text"], input[type="number"], textarea, select{width:100%;padding:10px 12px;border-radius:10px;border:2px solid rgba(15,23,42,0.06);outline:none;background: linear-gradient(180deg, #fff, #fbfdff);transition: all .16s ease;font-size:14px;color:#06243a;}
+  textarea{ min-height:90px; resize:vertical; }
+  input:focus, textarea:focus, select:focus{ transform: translateY(-1px); border-color: var(--blue-4); box-shadow: 0 6px 18px rgba(59,176,255,0.12);}
+  .field-wrapper{ margin-bottom:8px; position:relative; }
+  .msg{ font-size:13px; margin-top:6px; min-height:18px; }
+  .msg.success{ color:var(--success); }
+  .msg.error{ color:var(--error); }
+  .input-invalid{ border-color: rgba(224,40,40,0.9) !important; box-shadow: 0 4px 12px rgba(224,40,40,0.08) !important; }
+  .input-valid{ border-color: rgba(26,163,74,0.9) !important; box-shadow: 0 4px 12px rgba(26,163,74,0.06) !important; }
+  .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:8px; }
+  button.primary{ background: linear-gradient(90deg,var(--blue-4),var(--blue-5)); color:white; border:none; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; box-shadow: 0 8px 28px rgba(59,176,255,0.18); }
+  button.ghost{ background:transparent; border:1px solid rgba(15,23,42,0.06); padding:10px 12px; border-radius:10px; cursor:pointer; }
+  .small-help{ font-size:13px; color:var(--muted); margin-top:6px; }
+  @media (max-width:720px){ .row{ grid-template-columns: 1fr; } .actions{ justify-content:stretch; flex-direction:column; } button.primary{ width:100% } }
+
+  /* Modal */
+  .modal-backdrop{ position:fixed; inset:0; background: rgba(6, 10, 20, 0.45); display:flex; align-items:center; justify-content:center; z-index:60; opacity:0; pointer-events:none; transition:opacity .18s ease; }
+  .modal{ background: linear-gradient(180deg,#fff,#f8feff); width: min(520px, 92%); border-radius:14px; padding:20px; box-shadow:0 20px 60px rgba(2,6,23,0.4); transform: translateY(12px) scale(.98); transition: transform .18s ease; }
+  .modal-backdrop.show{ opacity:1; pointer-events:auto; }
+  .modal-backdrop.show .modal{ transform: translateY(0) scale(1); }
+  .modal h3{ margin:0 0 8px 0 }
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="width:44px;height:44px;border-radius:8px;background:linear-gradient(180deg,#fff,#f0fbff);display:flex;align-items:center;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s-8-5.6-8-10.2S7 4 12 8.2 20 7 20 10.8 12 21 12 21z" fill="#7fd1ff"/></svg>
+      </div>
+      <div>
+        <h1>แบบสอบถามสุขภาพ</h1>
+        <p style="margin:0;color:var(--muted)">ตรวจสอบข้อมูลก่อนส่งทุกครั้ง</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="form-title">
+        <div class="badge">แบบสอบถามสุขภาพ</div>
+        <div style="margin-left:auto;font-size:13px;color:var(--muted)"><a href="index.html" style="text-decoration:none;color:inherit">กลับเมนู</a></div>
+      </div>
+
+      <form id="healthForm" novalidate>
+        <div class="row">
+          <div>
+            <div class="field-wrapper">
+              <label class="field">อายุ</label>
+              <input id="age" type="number" placeholder="15 - 60">
+              <div id="ageMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">น้ำหนัก (กก.)</label>
+              <input id="weight" type="number" step="0.1" placeholder="เช่น 60.5">
+              <div id="weightMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">มีโรคประจำตัว</label><label style="font-size:14px;color:var(--muted)"><input id="diseaseCheck" type="checkbox"> ใช่</label>
+              <div id="diseaseMsg" class="msg" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="field-wrapper">
+              <label class="field">เพศ</label>
+              <div style="display:flex;gap:12px;align-items:center">
+                <label style="font-size:14px;color:var(--muted)"><input name="gender" type="radio" value="ชาย"> ชาย</label>
+                <label style="font-size:14px;color:var(--muted)"><input name="gender" type="radio" value="หญิง"> หญิง</label>
+              </div>
+              <div id="genderMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">ส่วนสูง (ซม.)</label>
+              <input id="height" type="number" step="0.1" placeholder="เช่น 170">
+              <div id="heightMsg" class="msg" aria-live="polite"></div>
+            </div>
+
+            <div class="field-wrapper">
+              <label class="field">รายละเอียดโรค (ถ้ามี)</label>
+              <textarea id="diseaseDetail" placeholder="ระบุโรคประจำตัว" disabled></textarea>
+              <div class="msg" id="diseaseDetailMsg" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="small-help">ข้อกำหนด: อายุ 15–60 ปี, กรอกน้ำหนัก & ส่วนสูง ให้ถูกต้อง</div>
+
+        <div class="actions">
+          <button type="button" class="ghost" onclick="resetHealth()">รีเซ็ต</button>
+          <button type="button" class="primary" onclick="submitHealth()">ส่งแบบสอบถาม</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">สำเร็จ 🎉</h3>
+      <p id="modalBody">การส่งสำเร็จ</p>
+      <div style="text-align:right">
+        <button class="ok" onclick="closeModal()" style="background:linear-gradient(90deg,#3bb0ff,#007acc);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer">ตกลง</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  /* --- Helpers --- */
+  function setMsg(elId, text, type){
+    const el = document.getElementById(elId);
+    el.textContent = text;
+    el.className = 'msg ' + (type === 'success' ? 'success' : (text ? 'error' : ''));
+  }
+  function markInput(inputEl, valid){
+    if(!inputEl) return;
+    inputEl.classList.remove('input-valid','input-invalid');
+    if(valid === true) inputEl.classList.add('input-valid');
+    else if(valid === false) inputEl.classList.add('input-invalid');
+  }
+
+  /* --- Health form validation --- */
+  const age = document.getElementById('age');
+  const weight = document.getElementById('weight');
+  const heightEl = document.getElementById('height');
+  const diseaseCheck = document.getElementById('diseaseCheck');
+  const diseaseDetail = document.getElementById('diseaseDetail');
+
+  const touched = {};
+
+  [age, weight, heightEl].forEach(el=>{ el.addEventListener('input', ()=>{ touched[el.id]=true; validateHealthField(el.id); }); });
+
+  document.querySelectorAll('input[name="gender"]').forEach(r=>{ r.addEventListener('change', ()=>{ touched.gender=true; validateHealthField('gender'); }); });
+
+  diseaseCheck.addEventListener('change', ()=>{
+    diseaseDetail.disabled = !diseaseCheck.checked;
+    touched.diseaseCheck = true;
+    if(!diseaseCheck.checked){
+      diseaseDetail.value = '';
+      setMsg('diseaseDetailMsg','',null);
+      setMsg('diseaseMsg','',null);
+    } else {
+      setMsg('diseaseMsg','กรุณากรอกรายละเอียดโรคด้านล่าง','error');
+    }
+  });
+
+  diseaseDetail.addEventListener('input', ()=>{ touched.diseaseDetail = true; validateHealthField('diseaseDetail'); });
+
+  function validateHealthField(id){
+    if(id==='age'){
+      const v = parseInt(age.value);
+      if(!touched.age && age.value===''){ setMsg('ageMsg','',null); markInput(age,null); return false; }
+      if(Number.isInteger(v) && v>=15 && v<=60){ setMsg('ageMsg','✓ อายุอยู่ในช่วงที่รับได้','success'); markInput(age,true); return true; }
+      setMsg('ageMsg','อายุต้องอยู่ระหว่าง 15 - 60 ปี','error'); markInput(age,false); return false;
+    }
+    if(id==='gender'){
+      const g = document.querySelector('input[name="gender"]:checked');
+      if(!touched.gender && !g){ setMsg('genderMsg','',null); return false; }
+      if(g){ setMsg('genderMsg','✓ เลือกเพศแล้ว','success'); return true; }
+      setMsg('genderMsg','กรุณาเลือกเพศ','error'); return false;
+    }
+    if(id==='weight'){
+      const v = parseFloat(weight.value);
+      if(!touched.weight && weight.value===''){ setMsg('weightMsg','',null); markInput(weight,null); return false; }
+      if(!isNaN(v) && v>0){ setMsg('weightMsg','✓ น้ำหนักถูกต้อง','success'); markInput(weight,true); return true; }
+      setMsg('weightMsg','กรุณากรอกน้ำหนักที่มากกว่า 0','error'); markInput(weight,false); return false;
+    }
+    if(id==='height'){
+      const v = parseFloat(heightEl.value);
+      if(!touched.height && heightEl.value===''){ setMsg('heightMsg','',null); markInput(heightEl,null); return false; }
+      if(!isNaN(v) && v>0){ setMsg('heightMsg','✓ ส่วนสูงถูกต้อง','success'); markInput(heightEl,true); return true; }
+      setMsg('heightMsg','กรุณากรอกส่วนสูงที่มากกว่า 0','error'); markInput(heightEl,false); return false;
+    }
+    if(id==='diseaseDetail'){
+      if(!diseaseCheck.checked){ setMsg('diseaseDetailMsg','',null); return true; }
+      const v = diseaseDetail.value.trim();
+      if(!touched.diseaseDetail && v===''){ setMsg('diseaseDetailMsg','',null); markInput(diseaseDetail,null); return false; }
+      if(v.length>0){ setMsg('diseaseDetailMsg','✓ ข้อมูลครบ','success'); markInput(diseaseDetail,true); return true; }
+      setMsg('diseaseDetailMsg','กรุณาระบุรายละเอียดโรค','error'); markInput(diseaseDetail,false); return false;
+    }
+  }
+
+  function validateAllHealth(){
+    ['age','gender','weight','height','diseaseDetail'].forEach(k=>touched[k]=true);
+    const a = validateHealthField('age');
+    const b = validateHealthField('gender');
+    const c = validateHealthField('weight');
+    const d = validateHealthField('height');
+    const e = validateHealthField('diseaseDetail');
+    return a && b && c && d && e;
+  }
+
+  function resetHealth(){
+    document.getElementById('healthForm').reset();
+    ['ageMsg','genderMsg','weightMsg','heightMsg','diseaseMsg','diseaseDetailMsg'].forEach(id=>setMsg(id,'',''));
+    [age,weight,heightEl,diseaseDetail].forEach(el=>markInput(el,null));
+    document.querySelectorAll('input[name="gender"]').forEach(r=>r.checked=false);
+    diseaseDetail.disabled = true;
+    ['age','gender','weight','height','diseaseDetail','diseaseCheck'].forEach(k=>touched[k]=false);
+  }
+
+  function submitHealth(){
+    if(!validateAllHealth()){
+      alert('กรุณากรอกข้อมูลในแบบสอบถามให้ครบถ้วนและถูกต้อง');
+      return;
+    }
+    const w = parseFloat(weight.value);
+    const h = parseFloat(heightEl.value);
+    const bmi = w / ((h/100)**2);
+    showModal('แบบสอบถามบันทึกแล้ว', `BMI ของคุณคือ ${bmi.toFixed(2)}`);
+  }
+
+  /* --- Modal --- */
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalBody = document.getElementById('modalBody');
+  const modalTitle = document.getElementById('modalTitle');
+
+  function showModal(title, body){
+    modalTitle.textContent = title;
+    modalBody.textContent = body;
+    modalBackdrop.classList.add('show');
+    modalBackdrop.setAttribute('aria-hidden','false');
+  }
+  function closeModal(){ modalBackdrop.classList.remove('show'); modalBackdrop.setAttribute('aria-hidden','true'); }
+  modalBackdrop.addEventListener('click', (e)=>{ if(e.target === modalBackdrop) closeModal(); });
+  document.querySelectorAll('form').forEach(f=>{ f.addEventListener('submit', ev => ev.preventDefault()); });
+  resetHealth();
+</script>
+</body>
+</html>
